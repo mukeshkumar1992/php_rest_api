@@ -4,9 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>php_rest_api</title>
+    <!-- fevicon link -->
     <link rel="icon" type="image/png" href="image/favicon/web-app-manifest-192x192.png" sizes="192x192" />
+    <!-- CSS Link -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <!-- jqueryTable -->
+    <link rel="stylesheet" href="css/dataTables.min.css">
+    
   </head>
   <body style="background-color: #f5f6fa;">
     <div class="container">
@@ -15,55 +20,60 @@
                 <div class="card-header">
                     <h3 class="bg-warning text-dark fw-bold p-3"><img src="image/logo.png" width="100">&nbsp;PHP REST API
                         <label style="margin-left: 50%; margin-top: 1%; text-transform: uppercase;">Search</label>
-                        <input type="text" id="search" autocomplete="off" class="from-control float-end border-0" style="width: 15%;margin-top: 1%;" required>
+                        <input type="text" id="search" autocomplete="off" class="form-control float-end border-0" style="width: 15%;margin-top: 1%;" required>
                     </h3>
                     <form action="index.html" method="post" id="addForm" class="form-group">
                         <div class="row">
                             <div class="col-2 mt-3">
                                 <label class="fw-bold">Name</label>
-                                <input type="text" name="sname" id="sname" class="from-control" placeholder="Enter Name" required>
+                                <input type="text" name="sname" id="sname" class="form-control" placeholder="Enter Name" required>
                             </div>
 
                             <div class="col-2 mt-3">
-                                <label class="fw-bold">Father Name</label>
-                                <input type="text" name="sfname" id="sfname" class="from-control" placeholder="Enter Father Name" required>
+                                <label class="fw-bold">Father/Mother Name</label>
+                                <input type="text" name="sfname" id="sfname" class="form-control" placeholder="Enter Father Name" required>
                             </div>
 
                             <div class="col-2 mt-3">
                                 <label class="fw-bold">Mobile</label>
-                                <input type="text" name="smobile" id="smobile" class="from-control" placeholder="Enter Mobile No" required>
+                                <input type="text" name="smobile" id="smobile" class="form-control" placeholder="Enter Mobile No" required>
                             </div>
 
                             <div class="col-2 mt-3">
                                 <label class="fw-bold">Email</label>
-                                <input type="text" name="semail" id="semail" class="from-control" placeholder="Enter Email Id" required>
+                                <input type="text" name="semail" id="semail" class="form-control" placeholder="Enter Email Id" required>
                             </div>
 
                             <div class="col-2 mt-3">
                                 <label class="fw-bold">Course</label>
-                                <input type="text" name="scourse" id="scourse" class="from-control" placeholder="Enter Course" required>
+                                <input type="text" name="scourse" id="scourse" class="form-control" placeholder="Enter Course" required>
                             </div>
 
                             <div class="col-2 mt-3">
                                 <label class="fw-bold">Address</label>
-                                <input type="text" name="saddres" id="saddres" class="from-control" placeholder="Enter Address" required>
+                                <input type="text" name="saddres" id="saddres" class="form-control" placeholder="Enter Address" required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-warning fw-bold mt-3 float-end">SUBMIT</button>
+                        <!-- message show -->
+                            <div class="message text-center text-dark bg-warning fw-bold w-25 mx-auto" id="error-message"></div>
+                            <div class="message text-center text-warning bg-success fw-bold w-25 mx-auto" id="success-message"></div>
+                        <input type="submit" class="btn btn-warning fw-bold mt-3 float-end" id="save-btn" value="SUBMIT">
                     </form> 
                 </div>
+                
                 <div class="card-body" style="width:100%; height:65vh; overflow:auto;">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover" id="myTable">
                         <tr class="bg-warning" style="background-color: #ffc107 !important;">
                             <td class="fw-bold text-center">SR No</td>
                             <td class="fw-bold text-center">Name</td>
-                            <td class="fw-bold text-center">Father Name</td>
+                            <td class="fw-bold text-center">Father/Mother Name</td>
                             <td class="fw-bold text-center">Mobile</td>
                             <td class="fw-bold text-center">Email</td>
                             <td class="fw-bold text-center">Course</td>
                             <td class="fw-bold text-center">Address</td>
                             <td class="fw-bold text-center">Date</td>
-                            <td class="fw-bold text-center">Action</td>
+                            <td class="fw-bold text-center">Edit</td>
+                            <td class="fw-bold text-center">Delete</td>
                         </tr>
                         <tbody id="load-table">
 
@@ -73,52 +83,278 @@
             </div>
         </div>
     </div>
+    
+    <!-- popup start -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="margin-top: 10%;">
+          <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+              <h1 class="modal-title fs-5  fw-bold" id="exampleModalLabel">PHP REST API UPDATE FORM</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-group" id="editForm" action="index.html">
+                    <div class="row">
+                        <div class="col-6 mt-3">
+                            <div class="label fw-bold">Name</div>
+                            <input type="text" class="form-control" name="sid" id="edit-id" hidden="">
+                            <input type="text" class="form-control" name="sname" id="edit-name" required>
+                        </div>
+
+                        <div class="col-6 mt-3">
+                            <div class="label fw-bold">Father/Mother Name</div>
+                            <input type="text" class="form-control" name="sfname" id="edit-fname" required>
+                        </div>
+
+                        <div class="col-6 mt-3">
+                            <div class="label fw-bold">Mobile</div>
+                            <input type="text" class="form-control" name="smobile" id="edit-mobile" required>
+                        </div>
+
+                        <div class="col-6 mt-3">
+                            <div class="label fw-bold">Email</div>
+                            <input type="text" class="form-control" name="semail" id="edit-email" required>
+                        </div>
+
+                        <div class="col-6 mt-3">
+                            <div class="label fw-bold">Course</div>
+                            <input type="text" class="form-control" name="scourse" id="edit-course" required>
+                        </div>
+
+                        <div class="col-6 mt-3">
+                            <div class="label fw-bold">Address</div>
+                            <input type="text" class="form-control" name="saddres" id="edit-addres" required>
+                        </div>
+
+                    </div><hr>
+                    <button type="button" class="btn btn-success fw-bold edit-btn" id="edit-btn">UPDATE</button>
+                    <button type="button" class="ms-3 btn btn-warning  fw-bold" data-bs-dismiss="modal">CLOSE</button>
+                </form>
+                
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- popup end -->
+
+    
+    <!-- javaScript link -->
     <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="js/script.js"></script>
+    <!-- jquery link -->
     <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
+        
         //Fetch All Records
-        function loadTable(){
+            function loadTable(){
+            $("#load-table").html("");
             $.ajax({
             url : 'http://localhost:8080/php_rest_api/api-fetch-all.php',
             type : "GET",
             success : function(data){
             if(data.status==false)
             {
-                $('#load-table').append("<tr><td colspan='6'><h2>"+data.message+"</h2></td></tr>")
+                $("#load-table").append("<tr><td colspan='6'><h2>"+data.message+"</h2></td></tr>");
             }
             else
             {
                 $.each(data, function(key, value){
                     $('#load-table').append("<tr>"
-                        +"<td>"+value.id+"</td>"+
-                        "<td>"+value.name+"</td>"+
-                        "<td>"+value.fname+"</td>"+
-                        "<td>"+value.mobile+"</td>"+
-                        "<td>"+value.email+"</td>"+
-                        "<td>"+value.course+"</td>"+
-                        "<td>"+value.addres+"</td>"+
-                        "<td>"+value.create_at+"</td>"+
-                        "<td><button class='btn btn-warning fw-bold' data-eid='"+value.id+"'>Edit</button>"+
-                        "<button class='btn btn-success fw-bold ms-3' data-id='"+value.id+"'>Delete</button></td>"+
+                        +"<td align='center'>"+value.id+"</td>"+
+                        "<td align='center'>"+value.name+"</td>"+
+                        "<td align='center'>"+value.fname+"</td>"+
+                        "<td align='center'>"+value.mobile+"</td>"+
+                        "<td align='center'>"+value.email+"</td>"+
+                        "<td align='center'>"+value.course+"</td>"+
+                        "<td align='center'>"+value.addres+"</td>"+
+                        "<td align='center'>"+value.create_at+"</td>"+
+                        "<td align='center'><button data-bs-toggle='modal' data-bs-target='#exampleModal' class='btn btn-warning fw-bold edit-btn' data-eid='"+value.id+"'>Edit</button></td>"+
+                        "<td><button class='btn btn-success fw-bold delete-btn' data-id='"+value.id+"'>Delete</button></td>"+
                         "</tr>");
-                });
-            }
+                    });
+                }
             }
             });
         }
         loadTable();
-        //Inset New Records
-
-        //Fetch Single Records : Show In Modal Box
-
-        //Hide Modal Box
-
-        //Updated Records
-
-        //Live Search Records
+        
+        // Show Success or Error Message
+            function message (message, status)
+            {
+                if(status == true)
+                {
+                    $("#success-message").html(message).slideDown();
+                    $("#error-message").slideUp();
+                    setTimeout(function(){
+                        $("#success-message").slideUp();
+                    }, 4000);
+                }
+                else if(status == false)
+                {
+                    $("#error-message").html(message).slideDown();
+                    $("#success-message").slideUp();
+                    setTimeout(function(){
+                        $("#error-message").slideUp();
+                    }, 4000);
+                }
+            }
+        
+        // Function for from data to json object
+            function jsonData(targetForm){
+            var arr =$(targetForm).serializeArray();
+            var obj = {};
+            for(a=0; a < arr.length; a++)
+        {
+            if(arr[a].value == "")
+            {
+                return false;
+            }
+            obj[arr[a].name] = arr[a].value;
+        }
+            var json_string = JSON.stringify(obj);
+            return json_string;
+        } 
+        
+        //Insert New Records
+            $("#save-btn").on("click",function(e){ 
+            e.preventDefault();
+            
+            var jsonObj = jsonData("#addForm");
+            if(jsonObj == false)
+            {
+                message("All fields fillup are mandatory.",false);
+            }
+            else
+            {
+                $.ajax({
+                url : 'http://localhost:8080/php_rest_api/api-insert.php',
+                type : "POST",
+                data : jsonObj,
+                success : function(data){
+                    message(data.message, data.status);
+                    if(data.status == true)
+                    {
+                        loadTable();
+                        $("#addForm").trigger("reset");
+                    }
+                }
+            });
+        }
         });
+
+        //Delete Record
+            $(document).on("click",".delete-btn",function(){
+            if(confirm("Do you want to confirm delete this record?"))
+            {
+                var studentId = $(this).data('id');
+                var obj = {sid : studentId};
+                var myJSON = JSON.stringify(obj);
+                var row = this;
+                $.ajax({
+                    url : 'http://localhost:8080/php_rest_api/api-delete.php',
+                    type : "POST",
+                    data : myJSON,
+                    success : function(data){
+                    message(data.message, data.status);
+                    if(data.status == true)
+                        {
+                            $(row).closest("tr").fadeOut();
+                        } 
+                    }
+                });
+            }
+        });
+        
+        //Fetch Single Records : Show In Modal Box
+            $(document).on("click",".edit-btn",function(){
+                $("#modal").show();
+                var studentId = $(this).data('eid');
+                var obj = {sid : studentId};
+                var myJSON = JSON.stringify(obj);
+                $.ajax({
+                    url : 'http://localhost:8080/php_rest_api/api-fetch-single.php',
+                    type : "POST",
+                    data : myJSON,
+                    success : function(data){
+                        $("#edit-id").val(data[0].id);
+                        $("#edit-name").val(data[0].name);
+                        $("#edit-fname").val(data[0].fname);
+                        $("#edit-mobile").val(data[0].mobile);
+                        $("#edit-email").val(data[0].email);
+                        $("#edit-course").val(data[0].course);
+                        $("#edit-addres").val(data[0].addres);
+                    }
+                });
+            });
+        
+        //Hide Modal Box
+            $("#close-btn").on("click",function(){
+                $("#modal").hide();
+            });
+        
+        //Updated Records
+            $("#edit-btn").on("click",function(e){ 
+            e.preventDefault();
+            
+            var jsonObj = jsonData("#editForm");
+            if(jsonObj == false)
+            {
+                message("All fields fillup are mandatory.",false);
+            }
+            else
+            {
+                $.ajax({
+                url : 'http://localhost:8080/php_rest_api/api-update.php',
+                type : "POST",
+                data : jsonObj,
+                success : function(data){
+                    message(data.message, data.status);
+                    if(data.status == true)
+                    {
+                        $("#exampleModal").hide();
+                        $("#editForm").trigger("reset");
+                        loadTable();
+                    }
+                }
+            });
+        }
+        });
+        
+        //Live Search Records
+            $("#search").on("keyup",function(){
+            var search_term = $(this).val();
+            $("#load-table").html("");
+            $.ajax({
+                url : 'http://localhost:8080/php_rest_api/api-search.php?search=' + search_term,
+                type : "GET",
+                success : function(data){
+                if(data.status == false)
+                {
+                $("#load-table").append("<tr><td colspan='6'><h2>"+data.message+"</h2></td></tr>");
+                }
+            else
+            {
+                $.each(data, function(key, value){
+                    $('#load-table').append("<tr>"
+                        +"<td align='center'>"+value.id+"</td>"+
+                        "<td align='center'>"+value.name+"</td>"+
+                        "<td align='center'>"+value.fname+"</td>"+
+                        "<td align='center'>"+value.mobile+"</td>"+
+                        "<td align='center'>"+value.email+"</td>"+
+                        "<td align='center'>"+value.course+"</td>"+
+                        "<td align='center'>"+value.addres+"</td>"+
+                        "<td align='center'>"+value.create_at+"</td>"+
+                        "<td align='center'><button data-bs-toggle='modal' data-bs-target='#exampleModal' class='btn btn-warning fw-bold edit-btn' data-eid='"+value.id+"'>Edit</button></td>"+
+                        "<td><button class='btn btn-success fw-bold delete-btn' data-id='"+value.id+"'>Delete</button></td>"+
+                        "</tr>");
+                    });
+                }
+            }
+            
+        });
+    })
+    });
     </script>
   </body>
 </html>
